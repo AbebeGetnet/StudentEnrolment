@@ -9,10 +9,10 @@ namespace StudentEnrolment.Models
         public int CourseId { get; set; }
         [ForeignKey(nameof(CourseId))]
         [ValidateNever]
-        public virtual Course Course { get; set; }
-        public int StudentId { get; set; }
+        public virtual Course? Course { get; set; }
+        public int? StudentId { get; set; }
         [ForeignKey(nameof(StudentId))]
         [ValidateNever]
-        public virtual Student Student { get; set; }
+        public virtual Student? Student { get; set; }
     }
 }

@@ -22,12 +22,29 @@ namespace StudentEnrolment.Controllers
         // GET: Courses
         public async Task<IActionResult> Index()
         {
-              return _context.Courses != null ? 
-                          View(await _context.Courses.Include(s => s.Department).ToListAsync()) :
-                          Problem("Entity set 'ApplicationDbContext.Courses'  is null.");
+            var applicationDbContext = _context.Courses.Include(c => c.Department);
+            return View(await applicationDbContext.ToListAsync());
         }
 
-       
+        // GET: Courses/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null || _context.Courses == null)
+            {
+                return NotFound();
+            }
+
+            var course = await _context.Courses
+                .Include(c => c.Department)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (course == null)
+            {
+                return NotFound();
+            }
+
+            return View(course);
+        }
+
         // GET: Courses/Create
         public IActionResult Create()
         {
@@ -40,7 +57,7 @@ namespace StudentEnrolment.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,CourseTitle,CreditHour,DepartmentId")] Course course)
+        public async Task<IActionResult> Create( Course course)
         {
             if (ModelState.IsValid)
             {
@@ -60,7 +77,7 @@ namespace StudentEnrolment.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Courses.Include(s => s.Department).FirstOrDefaultAsync(s => s.Id == id);
+            var course = await _context.Courses.FindAsync(id);
             if (course == null)
             {
                 return NotFound();
@@ -113,7 +130,8 @@ namespace StudentEnrolment.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Courses.Include(s => s.Department)
+            var course = await _context.Courses
+                .Include(c => c.Department)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (course == null)
             {
