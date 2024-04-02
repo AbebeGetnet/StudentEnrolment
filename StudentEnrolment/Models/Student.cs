@@ -21,5 +21,6 @@ namespace StudentEnrolment.Models
         [ValidateNever]
         public virtual Course Course { get; set; }
         public virtual ICollection<Enrolment> Enrolments { get; set; }
+        public virtual ICollection<StudentCourse> StudentCourses { get; set; }
     }
 }
