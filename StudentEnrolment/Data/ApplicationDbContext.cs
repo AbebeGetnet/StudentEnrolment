@@ -14,5 +14,6 @@ namespace StudentEnrolment.Data
         public DbSet<Department> Departments { get; set; }
         public DbSet<Enrolment> Enrolments { get; set; }
         public DbSet<Student> Students { get; set; }
+        public DbSet<StudentCourse> StudentCourses { get; set; }
     }
 }
