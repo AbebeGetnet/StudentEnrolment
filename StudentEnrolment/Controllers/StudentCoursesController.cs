@@ -23,7 +23,7 @@ namespace StudentEnrolment.Controllers
         public async Task<IActionResult> Index()
         {
               return _context.StudentCourses != null ? 
-                          View(await _context.StudentCourses.ToListAsync()) :
+                          View(await _context.StudentCourses.Include(d => d.Department).Include(c => c.Course).ToListAsync()) :
                           Problem("Entity set 'ApplicationDbContext.StudentCourses'  is null.");
         }
 
@@ -48,6 +48,10 @@ namespace StudentEnrolment.Controllers
         // GET: StudentCourses/Create
         public IActionResult Create()
         {
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id");
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
+            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id");
+
             return View();
         }
 
@@ -64,6 +68,9 @@ namespace StudentEnrolment.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id");
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
+            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id");
             return View(studentCourse);
         }
 
@@ -80,6 +87,9 @@ namespace StudentEnrolment.Controllers
             {
                 return NotFound();
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id");
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
+            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id");
             return View(studentCourse);
         }
 
@@ -115,6 +125,9 @@ namespace StudentEnrolment.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id");
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
+            ViewData["StudentId"] = new SelectList(_context.Students, "Id", "Id");
             return View(studentCourse);
         }
 
