@@ -10,6 +10,8 @@ namespace StudentEnrolment.Data
             : base(options)
         {
         }
+        public DbSet<Campus> Campuses { get; set; }
+        public DbSet<College> Colleges { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Enrolment> Enrolments { get; set; }
