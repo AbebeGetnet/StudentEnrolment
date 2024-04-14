@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentEnrolment.Data;
 using StudentEnrolment.Models;
+using StudentEnrolment.Models.ViewModels;
 
 namespace StudentEnrolment.Controllers
 {
@@ -102,6 +103,59 @@ namespace StudentEnrolment.Controllers
             {
                 try
                 {
+                    _context.Update(campus);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!CampusExists(campus.CampusId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["CollegeId"] = new SelectList(_context.Colleges, "CollegeId", "CollegeId", campus.CollegeId);
+            return View(campus);
+        }
+        public async Task<IActionResult> AddCampus(int? id)
+        {
+            if (id == null || _context.Campuses == null)
+            {
+                return NotFound();
+            }
+
+            var campus = await _context.Campuses.FindAsync(id);
+            if (campus == null)
+            {
+                return NotFound();
+            }
+            ViewData["CollegeId"] = new SelectList(_context.Colleges, "CollegeId", "CollegeId", campus.CollegeId);
+            return View(campus);
+        }
+
+        // POST: Campus/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddCampus(int id, CampusViewModel campusViewModel)
+        {
+            if (id != campusViewModel.CampusId)
+            {
+                return NotFound();
+            }
+            var campus = new CampusViewModel();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    campusViewModel.CollegeId = id;
                     _context.Update(campus);
                     await _context.SaveChangesAsync();
                 }
