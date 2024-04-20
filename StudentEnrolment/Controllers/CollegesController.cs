@@ -120,12 +120,12 @@ namespace StudentEnrolment.Controllers
         }
         public async Task<IActionResult> AddCampus(int? id)
         {
-            if (id == null || _context.Campuses == null)
+            if (id == null || _context.Colleges == null)
             {
                 return NotFound();
             }
 
-            var campus = await _context.Campuses.FindAsync(id);
+            var campus = await _context.Colleges.FindAsync(id);
             if (campus == null)
             {
                 return NotFound();
@@ -151,7 +151,7 @@ namespace StudentEnrolment.Controllers
             {
                 try
                 {
-                    campusViewModel.CollegeId = id;
+                    campus.CollegeId = id;
                     _context.Update(campus);
                     await _context.SaveChangesAsync();
                 }

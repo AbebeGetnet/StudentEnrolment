@@ -49,8 +49,8 @@ namespace StudentEnrolment.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id");
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id");
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle");
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
             return View();
         }
 
@@ -67,8 +67,8 @@ namespace StudentEnrolment.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", student.CourseId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id", student.DepartmentId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.CourseId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", student.DepartmentId);
             return View(student);
         }
 
@@ -122,8 +122,8 @@ namespace StudentEnrolment.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", student.CourseId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id", student.DepartmentId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.CourseId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", student.DepartmentId);
             return View(student);
         }
 
@@ -169,6 +169,10 @@ namespace StudentEnrolment.Controllers
         private bool StudentExists(int id)
         {
           return (_context.Students?.Any(e => e.Id == id)).GetValueOrDefault();
+        }
+        public bool IsRowUnique(string name)
+        {
+            return (_context.Students?.Any(e => e.FullName == name)).GetValueOrDefault();
         }
     }
 }

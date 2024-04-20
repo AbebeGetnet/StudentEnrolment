@@ -1,8 +1,12 @@
 ﻿namespace StudentEnrolment.Models.Enums
 {
-    public enum Gender
+    public enum DdlEnums
     {
         Male ,
         Female
+    }
+    public enum Grade
+    {
+        A, B, C, D, F
     }
 }
