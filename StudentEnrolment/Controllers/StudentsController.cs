@@ -61,7 +61,7 @@ namespace StudentEnrolment.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FullName,Gender,BirthDate,PhoneNumber,Email,DepartmentId,CourseId")] Student student)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 _context.Add(student);
                 await _context.SaveChangesAsync();

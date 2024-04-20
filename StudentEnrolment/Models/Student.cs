@@ -2,6 +2,8 @@
 using StudentEnrolment.Models.Enums;
 using System.ComponentModel.DataAnnotations.Schema;
 
+
+
 namespace StudentEnrolment.Models
 {
     public class Student
@@ -15,12 +17,12 @@ namespace StudentEnrolment.Models
         public int DepartmentId { get; set; }
         [ForeignKey(nameof(DepartmentId))]
         [ValidateNever]
-        public virtual Department Department { get; set; }
+        public virtual Department? Department { get; set; }
         public int CourseId { get; set; }
         [ForeignKey(nameof(CourseId))]
         [ValidateNever]
-        public virtual Course Course { get; set; }
-        public virtual ICollection<Enrolment> Enrolments { get; set; }
-        public virtual ICollection<StudentCourse> StudentCourses { get; set; }
+        public virtual Course? Course { get; set; }
+        public virtual ICollection<Enrolment>? Enrolments { get; set; }
+        public virtual ICollection<StudentCourse>? StudentCourses { get; set; }
     }
 }
