@@ -85,8 +85,8 @@ namespace StudentEnrolment.Controllers
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "Id", student.CourseId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Id", student.DepartmentId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.CourseId);
+            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", student.DepartmentId);
             return View(student);
         }
 
