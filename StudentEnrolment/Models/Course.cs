@@ -12,8 +12,6 @@ namespace StudentEnrolment.Models
         [ForeignKey(nameof(DepartmentId))]
         [ValidateNever]
         public virtual Department? Department { get; set; }
-        public virtual ICollection<Student>? Students { get; set; }
-        public virtual ICollection<Enrolment>? Enrolments { get; set; }
         public virtual ICollection<StudentCourse>? StudentCourses { get; set; }
     }
 }

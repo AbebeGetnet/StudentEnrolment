@@ -1,5 +1,4 @@
-﻿@using StudentEnrolment.Models.Enums
-@model StudentEnrolment.Models.Student
+﻿@model EnrollmentViewModel
 
 @{
     ViewData["Title"] = "Create";
@@ -10,44 +9,47 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form enctype="multipart/form-data" asp-action="Create"  >
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="FullName" class="control-label"></label>
-                <input asp-for="FullName" class="form-control" />
-                <span asp-validation-for="FullName" class="text-danger"></span>
+                <label asp-for="Student.FullName" class="control-label"></label>
+                <input asp-for="Student.FullName" class="form-control" />
+                <span asp-validation-for="Student.FullName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Gender" class="control-label"></label>
-                <select asp-for="Gender" class="form-control" asp-items="@Html.GetEnumSelectList<DdlEnums>()"></select>
-                <span asp-validation-for="Gender" class="text-danger"></span>
+                <label asp-for="Student.Gender" class="control-label"></label>
+                <select asp-for="Student.Gender" class="form-control" asp-items="@Html.GetEnumSelectList<Gender>()"></select>
+                <span asp-validation-for="Student.Gender" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="BirthDate" class="control-label"></label>
-                <input asp-for="BirthDate" class="form-control" />
-                <span asp-validation-for="BirthDate" class="text-danger"></span>
+                <label asp-for="Student.BirthDate" class="control-label"></label>
+                <input asp-for="Student.BirthDate" class="form-control" />
+                <span asp-validation-for="Student.BirthDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PhoneNumber" class="control-label"></label>
-                <input asp-for="PhoneNumber" class="form-control" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                <label asp-for="Student.PhoneNumber" class="control-label"></label>
+                <input asp-for="Student.PhoneNumber" class="form-control" />
+                <span asp-validation-for="Student.PhoneNumber" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                <label asp-for="Student.Email" class="control-label"></label>
+                <input asp-for="Student.Email" class="form-control" />
+                <span asp-validation-for="Student.Email" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Department.Name" class="control-label">Department</label>
-                <select asp-for="DepartmentId" class ="form-control" asp-items="ViewBag.DepartmentId"></select>
+                <label asp-for="Student.Photo" class="control-label"></label>
+                <div class="custom-file">
+                    <input asp-for="Student.Photo" class="custom-file-input" id="Photo"
+                           onchange="document.getElementById('StudentPhoto').src = window.URL.createObjectURL(this.fileName[0]" />
+                </div>                    <label class="custom-file-label" for="Photo">Choose file</label>
+
+                <span asp-validation-for="Student.Photo" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <label asp-for="CourseId" class="control-label">Course</label>
-                <select asp-for="CourseId" class ="form-control" asp-items="ViewBag.CourseId"></select>
-            </div>
+            <img id="StudentPhoto" src="" alt="Photo" width="100"
+                height="100" style="border:1px; margin-top:20px; margin-left:120px;" />
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
-                <a asp-action="Index">Back to List</a>
+                <a asp-action="Index" class="btn btn-warning">Back to List</a>
             </div>
         </form>
     </div>
@@ -57,4 +59,14 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('.custom-file-input').on("change", function () {
+            var fileName = $(this).val().split("\\").pop();
+            $(this).siblings('.custom-file-label').addClass("selected").html(fileName);
+        });
+    });
+</script>
 }

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using StudentEnrolment.Data;
 using StudentEnrolment.Models;
+using StudentEnrolment.Models.ViewModels;
 
 namespace StudentEnrolment.Controllers
 {
@@ -27,12 +28,13 @@ namespace StudentEnrolment.Controllers
                           Problem("Entity set 'ApplicationDbContext.Departments'  is null.");
         }
 
-        
+
         // GET: Departments/Create
         public IActionResult Create()
         {
             return View();
         }
+
 
         // POST: Departments/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.

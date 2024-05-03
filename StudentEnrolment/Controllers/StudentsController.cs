@@ -13,16 +13,18 @@ namespace StudentEnrolment.Controllers
     public class StudentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public StudentsController(ApplicationDbContext context)
+        public StudentsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Students
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Students.Include(s => s.Course).Include(s => s.Department);
+            var applicationDbContext = _context.Students;
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -35,8 +37,7 @@ namespace StudentEnrolment.Controllers
             }
 
             var student = await _context.Students
-                .Include(s => s.Course)
-                .Include(s => s.Department)
+                .Include(s => s.StudentCourses)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
@@ -49,6 +50,9 @@ namespace StudentEnrolment.Controllers
         // GET: Students/Create
         public IActionResult Create()
         {
+            //ViewBag.Department = GetDepartments();
+            //ViewBag.Course = GetCourses();
+            //Student student = new Student();
             ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle");
             ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name");
             return View();
@@ -59,16 +63,17 @@ namespace StudentEnrolment.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FullName,Gender,BirthDate,PhoneNumber,Email,DepartmentId,CourseId")] Student student)
+        public async Task<IActionResult> Create(Student student)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
+                string uniqueFileName = UploadFile(student);
+                student.ImageUrl = uniqueFileName;  
                 _context.Add(student);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.CourseId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", student.DepartmentId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.Id);
             return View(student);
         }
 
@@ -85,8 +90,7 @@ namespace StudentEnrolment.Controllers
             {
                 return NotFound();
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.CourseId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", student.DepartmentId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.Id);
             return View(student);
         }
 
@@ -122,8 +126,7 @@ namespace StudentEnrolment.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.CourseId);
-            ViewData["DepartmentId"] = new SelectList(_context.Departments, "Id", "Name", student.DepartmentId);
+            ViewData["CourseId"] = new SelectList(_context.Courses, "Id", "CourseTitle", student.Id);
             return View(student);
         }
 
@@ -136,8 +139,7 @@ namespace StudentEnrolment.Controllers
             }
 
             var student = await _context.Students
-                .Include(s => s.Course)
-                .Include(s => s.Department)
+                .Include(s => s.StudentCourses)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (student == null)
             {
@@ -174,5 +176,55 @@ namespace StudentEnrolment.Controllers
         {
             return (_context.Students?.Any(e => e.FullName == name)).GetValueOrDefault();
         }
+        private string UploadFile(Student student)
+        {
+            string uniqueFileName = null;
+            if (student.Photo != null) 
+            {
+                string uploadsFolder = Path.Combine(_webHostEnvironment.WebRootPath, "Images");
+                uniqueFileName = Guid.NewGuid().ToString() + "_" + student.Photo.FileName;
+                string filePath = Path.Combine(uploadsFolder, uniqueFileName);
+                using (var fileStream = new FileStream(filePath, FileMode.Create))
+                {
+                    student.Photo.CopyTo(fileStream);
+                }
+            }
+            return uniqueFileName;
+        }
+        //private List<SelectListItem> GetDepartments()
+        //{
+        //    var listofDepartments = new List<SelectListItem>();
+        //    listofDepartments = _context.Departments.Select(dept => new SelectListItem()
+        //    {
+        //        Value = dept.Id.ToString(),
+        //        Text = dept.Name
+        //    }).ToList();
+            
+        //    var ddlItem = new SelectListItem()
+        //    {
+        //        Value = null,
+        //        Text = "Select department"
+        //    };
+        //    listofDepartments.Insert(0, ddlItem);
+        //    return listofDepartments;
+        //}
+        //private List<SelectListItem> GetCourses()
+        //{
+        //    var listofCourses = new List<SelectListItem>();
+        //    listofCourses = _context.Courses.Select(c => new SelectListItem()
+        //    {
+        //        Value = c.Id.ToString(),
+        //        Text = c.CourseTitle
+        //    }).ToList();
+
+        //    var ddlItem = new SelectListItem()
+        //    {
+        //        Value = null,
+        //        Text = "Select course"
+        //    };
+        //    listofCourses.Insert(0, ddlItem);
+        //    return listofCourses;
+        //}
     }
+    
 }

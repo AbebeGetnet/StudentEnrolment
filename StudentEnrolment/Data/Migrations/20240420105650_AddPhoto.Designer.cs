@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using StudentEnrolment.Data;
 
@@ -11,9 +12,10 @@ using StudentEnrolment.Data;
 namespace StudentEnrolment.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240420105650_AddPhoto")]
+    partial class AddPhoto
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -305,27 +307,6 @@ namespace StudentEnrolment.Data.Migrations
                     b.ToTable("Departments");
                 });
 
-            modelBuilder.Entity("StudentEnrolment.Models.DepartmentCourse", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int?>("CourseId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DepartmentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourseId");
-
-                    b.ToTable("DepartmentCourses");
-                });
-
             modelBuilder.Entity("StudentEnrolment.Models.Enrolment", b =>
                 {
                     b.Property<int>("Id")
@@ -363,6 +344,12 @@ namespace StudentEnrolment.Data.Migrations
                     b.Property<DateTime>("BirthDate")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -375,6 +362,7 @@ namespace StudentEnrolment.Data.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ImageUrl")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -382,6 +370,10 @@ namespace StudentEnrolment.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CourseId");
+
+                    b.HasIndex("DepartmentId");
 
                     b.ToTable("Students");
                 });
@@ -485,25 +477,16 @@ namespace StudentEnrolment.Data.Migrations
                     b.Navigation("Department");
                 });
 
-            modelBuilder.Entity("StudentEnrolment.Models.DepartmentCourse", b =>
-                {
-                    b.HasOne("StudentEnrolment.Models.Course", "Course")
-                        .WithMany()
-                        .HasForeignKey("CourseId");
-
-                    b.Navigation("Course");
-                });
-
             modelBuilder.Entity("StudentEnrolment.Models.Enrolment", b =>
                 {
                     b.HasOne("StudentEnrolment.Models.Course", "Course")
-                        .WithMany()
+                        .WithMany("Enrolments")
                         .HasForeignKey("CourseId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("StudentEnrolment.Models.Student", "Student")
-                        .WithMany()
+                        .WithMany("Enrolments")
                         .HasForeignKey("StudentId");
 
                     b.Navigation("Course");
@@ -511,25 +494,38 @@ namespace StudentEnrolment.Data.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("StudentEnrolment.Models.StudentCourse", b =>
+            modelBuilder.Entity("StudentEnrolment.Models.Student", b =>
                 {
                     b.HasOne("StudentEnrolment.Models.Course", "Course")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("CourseId");
+                        .WithMany("Students")
+                        .HasForeignKey("CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("StudentEnrolment.Models.Department", "Department")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("DepartmentId");
-
-                    b.HasOne("StudentEnrolment.Models.Student", "Student")
-                        .WithMany("StudentCourses")
-                        .HasForeignKey("StudentId");
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Course");
 
                     b.Navigation("Department");
+                });
 
-                    b.Navigation("Student");
+            modelBuilder.Entity("StudentEnrolment.Models.StudentCourse", b =>
+                {
+                    b.HasOne("StudentEnrolment.Models.Course", null)
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("CourseId");
+
+                    b.HasOne("StudentEnrolment.Models.Department", null)
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("DepartmentId");
+
+                    b.HasOne("StudentEnrolment.Models.Student", null)
+                        .WithMany("StudentCourses")
+                        .HasForeignKey("StudentId");
                 });
 
             modelBuilder.Entity("StudentEnrolment.Models.College", b =>
@@ -539,7 +535,11 @@ namespace StudentEnrolment.Data.Migrations
 
             modelBuilder.Entity("StudentEnrolment.Models.Course", b =>
                 {
+                    b.Navigation("Enrolments");
+
                     b.Navigation("StudentCourses");
+
+                    b.Navigation("Students");
                 });
 
             modelBuilder.Entity("StudentEnrolment.Models.Department", b =>
@@ -551,6 +551,8 @@ namespace StudentEnrolment.Data.Migrations
 
             modelBuilder.Entity("StudentEnrolment.Models.Student", b =>
                 {
+                    b.Navigation("Enrolments");
+
                     b.Navigation("StudentCourses");
                 });
 #pragma warning restore 612, 618

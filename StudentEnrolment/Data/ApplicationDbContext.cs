@@ -14,6 +14,7 @@ namespace StudentEnrolment.Data
         public DbSet<College> Colleges { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet<DepartmentCourse> DepartmentCourses { get; set; }
         public DbSet<Enrolment> Enrolments { get; set; }
         public DbSet<Student> Students { get; set; }
         public DbSet<StudentCourse> StudentCourses { get; set; }
